@@ -5,7 +5,7 @@ defmodule HBase.Mixfile do
     [app: :hbase,
      compilers: [:thrift | Mix.compilers],
      thrift_files: Mix.Utils.extract_files(["thrift"], [:thrift]),
-     version: "0.0.1",
+     version: "0.0.2",
      elixir: "~> 1.2",
      description: "A Wrapper for HBase Thrift Calls",
      package: package,
@@ -26,7 +26,8 @@ defmodule HBase.Mixfile do
       maintainers: ["Joseph Lozano"],
       licenses: ["MIT"],
       links: %{"Github" => "https://github.com/joseph-lozano/elixir-thrift-hbase"},
-      docs: [extras: ["README.md"]]
+      docs: [extras: ["README.md"]],
+      deps: [{:thrift, github: "pinterest/elixir-thrift", submodules: true}]
     ]
   end
   # Dependencies can be Hex packages:
