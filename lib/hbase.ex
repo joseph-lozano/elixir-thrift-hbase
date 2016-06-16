@@ -1,0 +1,2 @@
+defmodule HBase do
+end
