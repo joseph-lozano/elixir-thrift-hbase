@@ -30,7 +30,7 @@ defmodule HBase.Client do
   Get all columns from a single row.
   Accpets the pid returned from `start_link`, the table name and row name.
   Returns a tuple containing the row name as the first element and a map containing the columns and volumes as the second element.
-  Usage: 
+  Usage:
   ```
   HBase.Client.get(pid, "table", "a:1")
   > {"a:1", %{"col1" => "val1", "col2" => "val2}}
@@ -46,14 +46,17 @@ defmodule HBase.Client do
   Get all columns from a multiple rows.
   Accpets the pid returned from `start_link`, the table name and a list of row names.
   Returns a list containing tuples containing the row name as the first element and a map containing the columns and volumes as the second element.
-  Usage: 
+  Usage:
   ```
   HBase.Client.mget(pid, "table", ["a:1", "a:2")
   > [{"a:1", %{"col1" => "val1", "col2" => "val2}}, {"a:2", %{"col1" => "val1", "col2" => "val2}}]
   ```
   """
-  def mget(table, rows) when is_list(rows) do
-    GenServer.call(:hbase_client, {:mget, table, rows})
+  def mget(table, rows, cols) when is_list(rows) do
+    case cols do
+      :all ->  GenServer.call(:hbase_client, {:mget, table, rows})
+      _    ->  GenServer.call(:hbase_client, {:mget_with_cols, table, rows, cols})
+    end
   end
 
   # callbacks
@@ -65,6 +68,12 @@ defmodule HBase.Client do
 
   def handle_call({:mget, table, rows}, _from, client) do
     {client, {:ok, response}} = :thrift_client.call(client, :getRows, [table, rows, :dict.new()])
+    result = parse_get_response(response)
+    {:reply, result, client}
+  end
+
+  def handle_call({:mget_with_cols, table, rows, cols}, _from, client) do
+    {client, {:ok, response}} = :thrift_client.call(client, :getRowsWithColumns, [table, rows, cols, :dict.new()])
     result = parse_get_response(response)
     {:reply, result, client}
   end

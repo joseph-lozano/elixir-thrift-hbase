@@ -25,7 +25,7 @@ defmodule HBase do
     HBase.Client.get(table, row)
   end
 
-  def mget(table, row) do
-    HBase.Client.mget(table, row)
+  def mget(table, row, cols \\ :all) do
+    HBase.Client.mget(table, row, cols)
   end
 end
