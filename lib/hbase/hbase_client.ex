@@ -17,7 +17,7 @@ defmodule HBase.Client do
   """
   def start_link(host, port) do
     args = {String.to_char_list(host), port}
-    GenServer.start_link(__MODULE__, args, [name: :hbase_client])
+    GenServer.start_link(__MODULE__, args, [name: __MODULE__])
   end
 
   def init({host, port}) do
@@ -37,7 +37,7 @@ defmodule HBase.Client do
   ```
   """
   def get(table, row) do
-    GenServer.call(:hbase_client, {:get, table, row})
+    GenServer.call(__MODULE__, {:get, table, row})
   end
 
 
@@ -54,8 +54,8 @@ defmodule HBase.Client do
   """
   def mget(table, rows, cols) when is_list(rows) do
     case cols do
-      :all ->  GenServer.call(:hbase_client, {:mget, table, rows})
-      _    ->  GenServer.call(:hbase_client, {:mget_with_cols, table, rows, cols})
+      :all ->  GenServer.call(__MODULE__, {:mget, table, rows})
+      _    ->  GenServer.call(__MODULE__, {:mget_with_cols, table, rows, cols})
     end
   end
 
