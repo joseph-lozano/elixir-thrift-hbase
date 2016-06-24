@@ -21,8 +21,8 @@ defmodule HBase do
     supervise(children, strategy: :one_for_one)
   end
 
-  def get(table, row) do
-    HBase.Client.get(table, row)
+  def get(table, row, cols \\ :all) do
+    HBase.Client.get(table, row, cols)
   end
 
   def mget(table, row, cols \\ :all) do

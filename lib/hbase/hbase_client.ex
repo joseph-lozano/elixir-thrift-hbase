@@ -36,10 +36,12 @@ defmodule HBase.Client do
   > {"a:1", %{"col1" => "val1", "col2" => "val2}}
   ```
   """
-  def get(table, row) do
-    GenServer.call(__MODULE__, {:get, table, row})
+  def get(table, row, cols) do
+    case cols do
+      :all -> GenServer.call(__MODULE__, {:get, table, row})
+      _    -> GenServer.call(__MODULE__, {:get_with_cols, table, row, cols})
+    end
   end
-
 
   # mget
   @doc """
@@ -63,6 +65,12 @@ defmodule HBase.Client do
   def handle_call({:get, table, row}, _from, client) do
     {client, {:ok, response}} = :thrift_client.call(client, :getRow, [table, row, :dict.new()])
     [result] = parse_get_response(response)
+    {:reply, result, client}
+  end
+
+  def handle_call({:get_with_cols, table, rows, cols}, _from, client) do
+    {client, {:ok, response}} = :thrift_client.call(client, :getRowWithColumns, [table, rows, cols, :dict.new()])
+    result = parse_get_response(response)
     {:reply, result, client}
   end
 
