@@ -56,13 +56,10 @@ defmodule HBase do
   ```
   """
   def mget(table, rows, cols) when is_list(rows) do
-    worker = :poolboy.checkout(pool_name())
-    ret = case cols do
-      :all ->  GenServer.call(worker, {:mget, table, rows})
-      _    ->  GenServer.call(worker, {:mget_with_cols, table, rows, cols})
+    case cols do
+      :all ->  :poolboy.transaction(pool_name(), fn(pid) -> GenServer.call(worker, {:mget, table, rows}, 60000) end)
+      _    ->  :poolboy.transaction(pool_name(), fn(pid) -> GenServer.call(worker, {:mget_with_cols, table, rows, cols}, 60000) end)
     end
-    :poolboy.checkin(pool_name(), worker)
-    ret
   end
 
   defp pool_name do
