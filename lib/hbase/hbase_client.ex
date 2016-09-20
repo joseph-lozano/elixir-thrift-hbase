@@ -15,9 +15,9 @@ defmodule HBase.Client do
   {:ok, pid} = HBase.client.start_link("0.0.0.0", 9090)
   ```
   """
-  def start_link(host, port) do
+  def start_link([host, port]) do
     args = {String.to_char_list(host), port}
-    GenServer.start_link(__MODULE__, args, [name: __MODULE__])
+    GenServer.start_link(__MODULE__, args, [])
   end
 
   def init({host, port}) do
@@ -25,41 +25,7 @@ defmodule HBase.Client do
     {:ok, client}
   end
 
-  # Get
-  @doc """
-  Get all columns from a single row.
-  Accpets the pid returned from `start_link`, the table name and row name.
-  Returns a tuple containing the row name as the first element and a map containing the columns and volumes as the second element.
-  Usage:
-  ```
-  HBase.Client.get(pid, "table", "a:1")
-  > {"a:1", %{"col1" => "val1", "col2" => "val2}}
-  ```
-  """
-  def get(table, row, cols) do
-    case cols do
-      :all -> GenServer.call(__MODULE__, {:get, table, row})
-      _    -> GenServer.call(__MODULE__, {:get_with_cols, table, row, cols})
-    end
-  end
 
-  # mget
-  @doc """
-  Get all columns from a multiple rows.
-  Accpets the pid returned from `start_link`, the table name and a list of row names.
-  Returns a list containing tuples containing the row name as the first element and a map containing the columns and volumes as the second element.
-  Usage:
-  ```
-  HBase.Client.mget(pid, "table", ["a:1", "a:2")
-  > [{"a:1", %{"col1" => "val1", "col2" => "val2}}, {"a:2", %{"col1" => "val1", "col2" => "val2}}]
-  ```
-  """
-  def mget(table, rows, cols) when is_list(rows) do
-    case cols do
-      :all ->  GenServer.call(__MODULE__, {:mget, table, rows})
-      _    ->  GenServer.call(__MODULE__, {:mget_with_cols, table, rows, cols})
-    end
-  end
 
   # callbacks
   def handle_call({:get, table, row}, _from, client) do

@@ -5,7 +5,7 @@ defmodule HBase.Mixfile do
     [app: :hbase,
      compilers: [:thrift | Mix.compilers],
      thrift_files: Mix.Utils.extract_files(["thrift"], [:thrift]),
-     version: "0.0.3",
+     version: "0.0.4",
      elixir: "~> 1.3",
      description: "A Wrapper for HBase Thrift Calls",
      package: package,
@@ -17,7 +17,7 @@ defmodule HBase.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     [
-      applications: [:logger],
+      applications: [:logger, :poolboy],
       mod: {HBase, []}
    ]
   end
@@ -45,6 +45,7 @@ defmodule HBase.Mixfile do
   defp deps do
     [
       {:thrift, github: "pinterest/elixir-thrift", submodules: true},
+      {:poolboy, "~> 1.5"},
       {:earmark, ">= 0.0.0", only: :dev},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
