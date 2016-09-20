@@ -5,7 +5,7 @@ defmodule HBase.Mixfile do
     [app: :hbase,
      compilers: [:thrift | Mix.compilers],
      thrift_files: Mix.Utils.extract_files(["thrift"], [:thrift]),
-     version: "0.0.4",
+     version: "0.0.5",
      elixir: "~> 1.3",
      description: "A Wrapper for HBase Thrift Calls",
      package: package,
