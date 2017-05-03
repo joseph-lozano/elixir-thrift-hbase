@@ -6,7 +6,7 @@ defmodule HBase do
   Currently only supports get and mget
   """
 
-  def start(_type, _args), do: start_link
+  def start(_type, _args), do: start_link()
 
   def start_link do
     Supervisor.start_link(__MODULE__, :ok)
@@ -57,8 +57,8 @@ defmodule HBase do
   """
   def mget(table, rows, cols) when is_list(rows) do
     case cols do
-      :all ->  :poolboy.transaction(pool_name(), fn(pid) -> GenServer.call(worker, {:mget, table, rows}, 60000) end)
-      _    ->  :poolboy.transaction(pool_name(), fn(pid) -> GenServer.call(worker, {:mget_with_cols, table, rows, cols}, 60000) end)
+      :all ->  :poolboy.transaction(pool_name(), fn(pid) -> GenServer.call(pid, {:mget, table, rows}, 60000) end)
+      _    ->  :poolboy.transaction(pool_name(), fn(pid) -> GenServer.call(pid, {:mget_with_cols, table, rows, cols}, 60000) end)
     end
   end
 

@@ -8,8 +8,8 @@ defmodule HBase.Mixfile do
      version: "0.0.5",
      elixir: "~> 1.3",
      description: "A Wrapper for HBase Thrift Calls",
-     package: package,
-     deps: deps]
+     package: package(),
+     deps: deps()]
   end
 
   # Configuration for the OTP application
@@ -44,7 +44,7 @@ defmodule HBase.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:thrift, github: "pinterest/elixir-thrift", submodules: true},
+      {:thrift, "~> 1.3"},
       {:poolboy, "~> 1.5"},
       {:earmark, ">= 0.0.0", only: :dev},
       {:ex_doc, ">= 0.0.0", only: :dev}
